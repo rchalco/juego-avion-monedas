@@ -4,7 +4,7 @@
   "description": "Juego de avión disparando monedas - TypeScript, Canvas, Bun",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch src/main.ts",
+    "dev": "bun --hot server.ts",
     "build": "bun build src/main.ts --outdir dist --target browser",
     "preview": "bun run dist/main.js"
   },
