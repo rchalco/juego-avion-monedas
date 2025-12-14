@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot server.ts",
-    "build": "bun build src/main.ts --outdir dist --target browser",
-    "preview": "bun run dist/main.js"
+    "build": "bun run build.ts",
+    "preview": "bun --hot server.ts",
+    "open": "start dist/index.html"
   },
   "devDependencies": {
     "typescript": "^5.3.3",
