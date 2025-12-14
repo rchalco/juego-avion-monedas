@@ -217,6 +217,7 @@ class Rock {
   active: boolean = true;
   rotation: number = 0;
   rotationSpeed: number;
+  vertices: Array<{ x: number; y: number }> = [];
 
   constructor(x: number, y: number, level: number) {
     this.position = new Vector2D(x, y);
@@ -224,6 +225,17 @@ class Rock {
     this.size = (ROCK_MIN_SIZE + Math.random() * (ROCK_MAX_SIZE - ROCK_MIN_SIZE)) * sizeMultiplier;
     this.speed = level === 1 ? ROCK_SPEED_LEVEL1 : ROCK_SPEED_LEVEL2;
     this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+    
+    // Pre-calculate vertices for irregular hexagon
+    const sides = 6;
+    for (let i = 0; i < sides; i++) {
+      const angle = (Math.PI * 2 * i) / sides;
+      const radius = this.size / 2 + Math.random() * 5;
+      this.vertices.push({
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius
+      });
+    }
   }
 
   update() {
@@ -241,21 +253,16 @@ class Rock {
     ctx.translate(this.position.x, this.position.y);
     ctx.rotate(this.rotation);
 
-    // Dibujar roca (hexágono irregular)
+    // Dibujar roca (hexágono irregular pre-calculado)
     ctx.fillStyle = '#555555';
     ctx.beginPath();
-    const sides = 6;
-    for (let i = 0; i < sides; i++) {
-      const angle = (Math.PI * 2 * i) / sides;
-      const radius = this.size / 2 + Math.random() * 5;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
+    this.vertices.forEach((vertex, i) => {
       if (i === 0) {
-        ctx.moveTo(x, y);
+        ctx.moveTo(vertex.x, vertex.y);
       } else {
-        ctx.lineTo(x, y);
+        ctx.lineTo(vertex.x, vertex.y);
       }
-    }
+    });
     ctx.closePath();
     ctx.fill();
 
@@ -332,17 +339,34 @@ class Game {
   targetElement: HTMLElement;
 
   constructor() {
-    this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
-    this.ctx = this.canvas.getContext('2d')!;
+    const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+    const ctx = canvas?.getContext('2d');
+    
+    if (!canvas || !ctx) {
+      throw new Error('No se pudo inicializar el canvas del juego');
+    }
+    
+    this.canvas = canvas;
+    this.ctx = ctx;
     
     this.player = new Player(CANVAS_WIDTH / 2 - PLAYER_WIDTH / 2, CANVAS_HEIGHT - 100);
     
-    // Referencias a elementos del HUD
-    this.hudElement = document.getElementById('hud')!;
-    this.scoreElement = document.getElementById('score')!;
-    this.levelElement = document.getElementById('level')!;
-    this.livesElement = document.getElementById('lives')!;
-    this.targetElement = document.getElementById('target')!;
+    // Referencias a elementos del HUD (con validación)
+    const hudElement = document.getElementById('hud');
+    const scoreElement = document.getElementById('score');
+    const levelElement = document.getElementById('level');
+    const livesElement = document.getElementById('lives');
+    const targetElement = document.getElementById('target');
+    
+    if (!hudElement || !scoreElement || !levelElement || !livesElement || !targetElement) {
+      throw new Error('Faltan elementos del HUD en el DOM');
+    }
+    
+    this.hudElement = hudElement;
+    this.scoreElement = scoreElement;
+    this.levelElement = levelElement;
+    this.livesElement = livesElement;
+    this.targetElement = targetElement;
     
     this.setupEventListeners();
     this.updateHUD();
@@ -555,14 +579,14 @@ class Game {
       const x = Math.random() * (CANVAS_WIDTH - COIN_RADIUS * 2) + COIN_RADIUS;
       const y = -COIN_RADIUS;
       
-      // Determinar tipo de moneda basado en probabilidades
+      // Determinar tipo de moneda basado en probabilidades (suma: 0.5 + 0.3 + 0.2 = 1.0)
       const rand = Math.random();
       let type: CoinType;
-      if (rand < COIN_CONFIG[CoinType.BRONZE].spawnChance) {
+      if (rand < 0.5) { // 50% Bronze
         type = CoinType.BRONZE;
-      } else if (rand < COIN_CONFIG[CoinType.BRONZE].spawnChance + COIN_CONFIG[CoinType.SILVER].spawnChance) {
+      } else if (rand < 0.8) { // 30% Silver (0.5 + 0.3)
         type = CoinType.SILVER;
-      } else {
+      } else { // 20% Gold (remaining)
         type = CoinType.GOLD;
       }
       
@@ -722,12 +746,17 @@ class Game {
     this.ctx.fillStyle = 'rgba(0, 4, 40, 0.3)';
     this.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     
-    // Dibujar estrellas de fondo (efecto simple)
+    // Dibujar estrellas de fondo (efecto simple con distribución pseudoaleatoria)
     if (this.state === GameState.PLAYING) {
       this.ctx.fillStyle = '#ffffff';
-      for (let i = 0; i < 50; i++) {
-        const x = (i * 123) % CANVAS_WIDTH;
-        const y = ((Date.now() * 0.05 + i * 456) % CANVAS_HEIGHT);
+      const STAR_COUNT = 50;
+      const STAR_X_SEED = 123; // Semilla para distribución horizontal
+      const STAR_Y_SEED = 456; // Semilla para distribución vertical
+      const STAR_SPEED = 0.05;
+      
+      for (let i = 0; i < STAR_COUNT; i++) {
+        const x = (i * STAR_X_SEED) % CANVAS_WIDTH;
+        const y = ((Date.now() * STAR_SPEED + i * STAR_Y_SEED) % CANVAS_HEIGHT);
         this.ctx.fillRect(x, y, 2, 2);
       }
     }
