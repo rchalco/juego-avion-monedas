@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Avión y Monedas</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <!-- Menú Principal -->
+        <div id="main-menu" class="menu">
+            <h1>🚀 Avión y Monedas</h1>
+            <button id="start-btn" class="menu-btn">INICIAR JUEGO</button>
+            <button id="instructions-btn" class="menu-btn">INSTRUCCIONES</button>
+        </div>
+
+        <!-- Pantalla de Instrucciones -->
+        <div id="instructions-menu" class="menu hidden">
+            <h2>📖 Instrucciones</h2>
+            <div class="instructions-content">
+                <p><strong>Controles:</strong></p>
+                <ul>
+                    <li>WASD o Flechas: Mover avión</li>
+                    <li>Espacio: Disparar</li>
+                    <li>ESC o P: Pausa</li>
+                    <li>T: Tienda (Nivel 2)</li>
+                </ul>
+                <p><strong>Objetivo:</strong></p>
+                <ul>
+                    <li>Nivel 1: Alcanza 800 puntos</li>
+                    <li>Nivel 2: Alcanza 5000 puntos</li>
+                </ul>
+                <p><strong>Monedas:</strong></p>
+                <ul>
+                    <li>🥇 Oro: 25 disparos = 100 pts</li>
+                    <li>🥈 Plata: 12 disparos = 40 pts</li>
+                    <li>🥉 Bronce: 8 disparos = 15 pts</li>
+                </ul>
+            </div>
+            <button id="back-btn" class="menu-btn">VOLVER</button>
+        </div>
+
+        <!-- HUD del juego -->
+        <div id="hud" class="hidden">
+            <div class="hud-item">Puntos: <span id="score">0</span></div>
+            <div class="hud-item">Nivel: <span id="level">1</span></div>
+            <div class="hud-item">Vidas: <span id="lives">3</span></div>
+            <div class="hud-item">Objetivo: <span id="target">800</span></div>
+        </div>
+
+        <!-- Pantalla de Pausa -->
+        <div id="pause-menu" class="menu hidden">
+            <h2>⏸️ PAUSA</h2>
+            <button id="resume-btn" class="menu-btn">CONTINUAR</button>
+            <button id="restart-btn" class="menu-btn">REINICIAR</button>
+            <button id="quit-btn" class="menu-btn">SALIR</button>
+        </div>
+
+        <!-- Pantalla de Game Over -->
+        <div id="gameover-menu" class="menu hidden">
+            <h2>💥 GAME OVER</h2>
+            <p>Puntuación Final: <span id="final-score">0</span></p>
+            <button id="retry-btn" class="menu-btn">REINTENTAR</button>
+            <button id="menu-btn" class="menu-btn">MENÚ PRINCIPAL</button>
+        </div>
+
+        <!-- Pantalla de Victoria -->
+        <div id="victory-menu" class="menu hidden">
+            <h2>🏆 ¡VICTORIA!</h2>
+            <p>¡Completaste el juego!</p>
+            <p>Puntuación Final: <span id="victory-score">0</span></p>
+            <button id="play-again-btn" class="menu-btn">JUGAR DE NUEVO</button>
+            <button id="menu-btn-victory" class="menu-btn">MENÚ PRINCIPAL</button>
+        </div>
+
+        <!-- Tienda (Nivel 2) -->
+        <div id="shop-menu" class="menu hidden">
+            <h2>🛒 Tienda de Mejoras</h2>
+            <p>Puntos disponibles: <span id="shop-points">0</span></p>
+            <div class="shop-item">
+                <h3>Proyectil Mejorado (2x Daño)</h3>
+                <p>Costo: 50 puntos</p>
+                <button id="buy-power-btn" class="menu-btn">COMPRAR</button>
+            </div>
+            <p id="shop-message"></p>
+            <button id="close-shop-btn" class="menu-btn">CERRAR</button>
+        </div>
+
+        <!-- Transición de Nivel -->
+        <div id="level-transition" class="menu hidden">
+            <h2>🎉 ¡NIVEL COMPLETADO!</h2>
+            <p id="transition-message">Preparándote para el siguiente nivel...</p>
+            <button id="continue-btn" class="menu-btn">CONTINUAR</button>
+        </div>
+    </div>
+
+    <script type="module" src="main.ts"></script>
+</body>
+</html>
