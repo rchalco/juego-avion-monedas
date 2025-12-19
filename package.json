@@ -1,17 +1,18 @@
 {
   "name": "juego-avion-monedas",
   "version": "1.0.0",
-  "description": "Juego de avión disparando monedas - TypeScript, Canvas, Bun",
+  "description": "Juego de avión disparando monedas - TypeScript, Canvas, npm",
   "type": "module",
   "scripts": {
-    "dev": "bun --hot server.ts",
-    "build": "bun run build.ts",
-    "preview": "bun --hot server.ts",
+    "dev": "node server.js",
+    "build": "node build.js",
+    "preview": "node server.js",
     "open": "start dist/index.html"
   },
   "devDependencies": {
+    "@types/node": "^20.10.6",
     "typescript": "^5.3.3",
-    "@types/bun": "latest"
-  },
-  "dependencies": {}
+    "esbuild": "^0.20.2",
+    "tsx": "^4.7.0"
+  }
 }
